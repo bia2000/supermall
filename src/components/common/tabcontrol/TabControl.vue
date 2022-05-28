@@ -24,12 +24,13 @@ export default {
   },
   data() {
     return {
-      currentIndex: 1,
+      currentIndex: 0,
     }
   },
   methods: {
     itemClick(index) {
       this.currentIndex = index
+      this.$emit('tabClick', index)
     },
   },
 }
@@ -39,6 +40,7 @@ export default {
   display: flex;
   text-align: center;
   font-size: 15px;
+  z-index: 9;
 }
 .tab-control-item {
   height: 40px;

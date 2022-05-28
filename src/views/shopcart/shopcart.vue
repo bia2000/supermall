@@ -2,10 +2,8 @@
   <h2>购物车</h2>
 </template>
 <script>
-export default{
-  name:'shopcart'
+export default {
+  name: 'shopcart',
 }
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>
