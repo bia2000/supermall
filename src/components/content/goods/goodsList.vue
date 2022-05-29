@@ -2,7 +2,7 @@
   <div class="goods">
     <div v-for="item in goods" :key="item.index" class="goods-item">
       <a :href="item.link">
-        <img :src="item.show.img" alt="" />
+        <img :src="item.show.img" alt="" @load="imgLoad" />
         <div>
           <p>{{ item.title }}</p>
           <span>{{ item.price }}</span>
@@ -21,6 +21,11 @@ export default {
       default() {
         return []
       },
+    },
+  },
+  methods: {
+    imgLoad() {
+      this.$bus.$emit('itemImageLoad')
     },
   },
 }

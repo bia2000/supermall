@@ -1,6 +1,13 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control
+      :titles="titles"
+      @tabClick="tab_Click"
+      class="tabFixed"
+      ref="tabControl1"
+      v-show="isTabFixed"
+    ></tab-control>
     <Scroll
       class="wrapper"
       ref="scroll"
@@ -13,12 +20,12 @@
       <Feature></Feature>
       <tab-control
         :titles="titles"
-        class="tab-control"
         @tabClick="tab_Click"
+        ref="tabControl2"
       ></tab-control>
       <goods-list :goods="goods[currentType].list"></goods-list
     ></Scroll>
-    <back-top @click.native="backClick" v-show="true"></back-top>
+    <back-top @click.native="backClick" v-show="isShow"></back-top>
   </div>
 </template>
 <script>
@@ -26,12 +33,13 @@ import NavBar from '@/components/common/navbar/NavBar.vue'
 import TabControl from '@/components/common/tabcontrol/TabControl.vue'
 import GoodsList from '@/components/content/goods/goodsList.vue'
 import Scroll from '../../components/common/scroll/Scroll.vue'
+import BackTop from '@/components/content/backtop/BackTop.vue'
 
 import HomeSwiper from './childComps/HomeSwiper.vue'
 import HomeRecommend from './childComps/HomeRecommend.vue'
 import Feature from './childComps/Feature.vue'
 import { getHomeMultidata, getHomeGoods } from '@/apis/home'
-import BackTop from '@/components/content/backtop/BackTop.vue'
+import { debounce } from '@/common/utils'
 export default {
   name: 'home',
   components: {
@@ -56,6 +64,8 @@ export default {
       },
       currentType: 'pop',
       isShow: false,
+      isTabFixed: false,
+      tabOffsetTop: 0,
     }
   },
   created() {
@@ -65,6 +75,20 @@ export default {
     this.getHomeGoods('pop')
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
+  },
+  mounted() {
+    const refresh = debounce(this.$refs.scroll.refresh, 200)
+    // 监听图片加载完成
+    this.$bus.$on('itemImageLoad', () => {
+      // console.log(this.$refs.scroll.refresh)
+      // this.$refs.scroll && this.$refs.scroll.refresh()
+      refresh()
+    })
+  },
+  updated() {
+    // 获取tabcontrol的offset
+    this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
+    console.log(this.tabOffsetTop)
   },
   methods: {
     // 网络请求
@@ -95,16 +119,21 @@ export default {
           this.currentType = 'sell'
           break
       }
+      this.$refs.tabControl1.currentIndex = index
+      this.$refs.tabControl2.currentIndex = index
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0, 500)
     },
     contentScroll(position) {
+      // 判断backTop是否显示
       this.isShow = position.y < -1000
+      // 判断tabcontrol是否吸顶
+      this.isTabFixed = -position.y > this.tabOffsetTop
     },
     loadMore() {
       this.getHomeGoods(this.currentType)
-      this.$refs.scroll.scroll.refresh()
+      // this.$refs.scroll.scroll.refresh()
     },
   },
 }
@@ -122,15 +151,17 @@ export default {
   left: 0;
   right: 0;
   top: 0;
-  z-index: 9;
+  z-index: 19;
 }
 .home-nav img {
   height: 100vh;
   width: 300px;
 }
-.tab-control {
-  position: sticky;
+.tabFixed {
+  position: fixed;
   top: 44px;
+  left: 0;
+  right: 0;
   background-color: #fff;
 }
 .wrapper {
