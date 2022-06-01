@@ -1,14 +1,17 @@
 <template>
   <div class="goods">
     <div v-for="item in goods" :key="item.index" class="goods-item">
-      <a :href="item.link">
-        <img :src="item.show.img" alt="" @load="imgLoad" />
-        <div>
-          <p>{{ item.title }}</p>
-          <span>{{ item.price }}</span>
-          <span>{{ item.cfav }}</span>
-        </div>
-      </a>
+      <img
+        :src="item.image || item.show.img"
+        alt=""
+        @load="imgLoad"
+        @click="itemClick(item)"
+      />
+      <div>
+        <p>{{ item.title }}</p>
+        <span>{{ item.price }}</span>
+        <span>{{ item.cfav }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -23,9 +26,17 @@ export default {
       },
     },
   },
+  computed: {
+    showImage() {
+      return this.image || this.show.img
+    },
+  },
   methods: {
     imgLoad() {
       this.$bus.$emit('itemImageLoad')
+    },
+    itemClick(item) {
+      this.$router.push('/detail/' + item.iid)
     },
   },
 }

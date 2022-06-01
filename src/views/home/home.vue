@@ -33,13 +33,14 @@ import NavBar from '@/components/common/navbar/NavBar.vue'
 import TabControl from '@/components/common/tabcontrol/TabControl.vue'
 import GoodsList from '@/components/content/goods/goodsList.vue'
 import Scroll from '../../components/common/scroll/Scroll.vue'
-import BackTop from '@/components/content/backtop/BackTop.vue'
+// import BackTop from '@/components/content/backtop/BackTop.vue'
 
 import HomeSwiper from './childComps/HomeSwiper.vue'
 import HomeRecommend from './childComps/HomeRecommend.vue'
 import Feature from './childComps/Feature.vue'
 import { getHomeMultidata, getHomeGoods } from '@/apis/home'
-import { debounce } from '@/common/utils'
+import { itemListenerMixin, backTop } from '@/common/mixin'
+// import { debounce } from '@/common/utils'
 export default {
   name: 'home',
   components: {
@@ -50,7 +51,7 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
+    // BackTop,
   },
   data() {
     return {
@@ -63,11 +64,12 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: 'pop',
-      isShow: false,
+      // isShow: false,
       isTabFixed: false,
       tabOffsetTop: 0,
     }
   },
+  mixins: [itemListenerMixin, backTop],
   created() {
     // 请求多个数据
     this.getHomeMultidata()
@@ -77,19 +79,24 @@ export default {
     this.getHomeGoods('sell')
   },
   mounted() {
-    const refresh = debounce(this.$refs.scroll.refresh, 200)
-    // 监听图片加载完成
-    this.$bus.$on('itemImageLoad', () => {
-      // console.log(this.$refs.scroll.refresh)
-      // this.$refs.scroll && this.$refs.scroll.refresh()
-      refresh()
-    })
+    // const refresh = debounce(this.$refs.scroll.refresh, 200)
+    // // 监听图片加载完成
+    // this.itemImgListener = () => {
+    //   // console.log(this.$refs.scroll.refresh)
+    //   // this.$refs.scroll && this.$refs.scroll.refresh()
+    //   refresh()
+    // }
+    // this.$bus.$on('itemImageLoad', this.itemImgListener)
   },
   updated() {
     // 获取tabcontrol的offset
     this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
-    console.log(this.tabOffsetTop)
+    // console.log(this.tabOffsetTop)
   },
+  // deactivated() {
+  //   // 取消全局事件的监听
+  //   this.$bus.$off('itemImageLoad', this.itemImgListener)
+  // },
   methods: {
     // 网络请求
     getHomeMultidata() {
@@ -122,12 +129,13 @@ export default {
       this.$refs.tabControl1.currentIndex = index
       this.$refs.tabControl2.currentIndex = index
     },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0, 500)
-    },
+    // backClick() {
+    //   this.$refs.scroll.scrollTo(0, 0, 500)
+    // },
     contentScroll(position) {
       // 判断backTop是否显示
-      this.isShow = position.y < -1000
+      // this.isShow = position.y < -1000
+      this.backListner(position)
       // 判断tabcontrol是否吸顶
       this.isTabFixed = -position.y > this.tabOffsetTop
     },
