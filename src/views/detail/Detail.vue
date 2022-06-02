@@ -40,7 +40,8 @@
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
     <back-top @click.native="backClick" v-show="isShow"></back-top>
-    <detail-buttom-bar></detail-buttom-bar>
+    <detail-buttom-bar @addCart="addToCart"></detail-buttom-bar>
+    <!-- <toast :message="message" :show="show"></toast> -->
   </div>
 </template>
 <script>
@@ -53,9 +54,11 @@ import Scroll from '@/components/common/scroll/Scroll.vue'
 import DetailParamsInfo from './childComps/DetailParamsInfo.vue'
 import DetailCommentInfo from './childComps/DetailCommentInfo.vue'
 import GoodsList from '@/components/content/goods/goodsList.vue'
+import DetailButtomBar from './childComps/DetailButtomBar.vue'
+// import Toast from '@/components/common/Toast/Toast.vue'
 import { getDetail, Goods, Shop, GoodsParam, getRecommend } from '@/apis/detail'
 import { itemListenerMixin, backTop } from '@/common/mixin'
-import DetailButtomBar from './childComps/DetailButtomBar.vue'
+import { mapActions } from 'vuex'
 export default {
   components: {
     NavBar,
@@ -68,8 +71,8 @@ export default {
     DetailCommentInfo,
     GoodsList,
     DetailButtomBar,
+    // Toast,
   },
-  name: 'Detail',
   data() {
     return {
       iid: null,
@@ -83,6 +86,8 @@ export default {
       commentInfo: {},
       recommends: [],
       topicYs: [],
+      // show: false,
+      // message: '',
     }
   },
   mixins: [itemListenerMixin, backTop],
@@ -134,7 +139,9 @@ export default {
   destroyed() {
     this.$bus.$off('itemImageLoad', this.itemImgListener)
   },
+  computed: {},
   methods: {
+    ...mapActions(['addCart']),
     itemClick(index) {
       this.currentIndex = index
       this.$refs.scroll.scrollTo(0, this.topicYs[index], 100)
@@ -163,6 +170,29 @@ export default {
         } else break
       }
       this.currentIndex = index
+    },
+    addToCart() {
+      // 获取购物车需要展示的信息
+      const product = {}
+      product.image = this.topImages[0]
+      product.title = this.goods.title
+      product.price = this.goods.realPrice
+      product.iid = this.iid
+      // 将商品添加到购物车 (1.Promise,2.mapActions)
+      // this.$store.dispatch('addCart', product).then((res) => {
+      //   console.log(res)
+      // })
+      if (product.iid) {
+        this.addCart(product).then((res) => {
+          // this.show = true
+          // this.message = res
+          // // console.log(res)
+          // setTimeout(() => {
+          //   this.show = false
+          // }, 1500)
+          this.$toast.show(res, 1500)
+        })
+      }
     },
   },
 }

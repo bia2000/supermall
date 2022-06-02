@@ -6,7 +6,7 @@
       <div><i class="icon shou"></i><span>收藏</span></div>
     </div>
     <div class="right">
-      <div class="car">加入购物车</div>
+      <div class="car" @click="addToCart">加入购物车</div>
       <div class="buy">购买</div>
     </div>
   </div>
@@ -14,6 +14,11 @@
 <script>
 export default {
   name: 'DetailButtomBar',
+  methods: {
+    addToCart() {
+      this.$emit('addCart')
+    },
+  },
 }
 </script>
 <style lang="less" scoped>

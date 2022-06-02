@@ -156,6 +156,7 @@ export default {
   background-color: var(--color-tint);
   color: #fff;
   position: fixed;
+  font-weight: 600;
   left: 0;
   right: 0;
   top: 0;
@@ -173,12 +174,12 @@ export default {
   background-color: #fff;
 }
 .wrapper {
-  /* height: 100vh; */
-  position: absolute;
+  height: calc(100% - 44px - 49px);
+  /* position: absolute;
   top: 44px;
   bottom: 49px;
   left: 0;
-  right: 0;
+  right: 0; */
 }
 
 .el-carousel__item h3 {
