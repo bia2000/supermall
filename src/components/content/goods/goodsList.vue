@@ -27,9 +27,9 @@ export default {
     },
   },
   computed: {
-    showImage() {
-      return this.image || this.show.img
-    },
+    // showImage() {
+    //   return this.image || this.show.img
+    // },
   },
   methods: {
     imgLoad() {
